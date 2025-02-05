@@ -1,6 +1,6 @@
 let running = false;
 
-const testing = true;
+const testing = false;
 
 class Font {
     render() {}
