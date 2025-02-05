@@ -311,7 +311,7 @@ const Shell = {
         },
         set cursor(v) {
             this._cursor = v;
-            $("#mouse").props({src: "/cursors/" + v});
+            $("#mouse").props({src: "cursors/" + v});
         },
         fonts: {
             get JetBrainsMono() {
