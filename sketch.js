@@ -65,12 +65,14 @@ function moveMouse() {
 }
 
 function mouseDragged() {
+    if(!document.pointerLockElement) return;
     Shell.gl.mouse.x += movedX;
     Shell.gl.mouse.y += movedY;
     moveMouse();
 }
 
 function mouseMoved() {
+    if(!document.pointerLockElement) return;
     Shell.gl.mouse.x += movedX;
     Shell.gl.mouse.y += movedY;
     moveMouse();
