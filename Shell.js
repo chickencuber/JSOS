@@ -131,12 +131,23 @@ $("html")
             case CONTROL:
             case SHIFT:
             case ALT:
+            case ESCAPE:
             case 91:
+            case 112:
+            case 113:
+            case 114:
+            case 115:
+            case 116:
+            case 117:
+            case 118:
+            case 119:
+            case 120:
+            case 121:
+            case 122:
+            case 123:
                 break;
             case TAB:
                 Shell.terminal.add("    ");
-                break;
-            case ESCAPE:
                 break;
             case LEFT_ARROW:
                 if (Shell.terminal.cursor.x > Shell.localVars.workingDir.length + 1) {
