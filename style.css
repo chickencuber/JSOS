@@ -39,6 +39,7 @@ canvas {
   padding: 0;
   margin: 0;
   font-size: 22px;
+  line-height: 29px;
   overflow-x: visible;
   overflow-y: visible;
 }
@@ -66,8 +67,9 @@ canvas {
   font-variant-ligatures: none;
   font-family: JetBrainsMono;
   font-size: 22px;
-  width: 13.2px;
+  width: 13.203125px;
   height: 29px;
+  line-height: 29px;
   background-color: white;
   color: black;
   position: absolute;

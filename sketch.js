@@ -82,14 +82,17 @@ function mouseMoved() {
 function draw() {
     moveMouse();
     const cursor = Shell.terminal.cursor;
+    $("#text-cursor")
+        .css({
+            left: `${cursor.x * 13.203125}px`,
+            top: `${cursor.y * 29}px`,
+                 })
     switch (cursor.style) {
         case "block":
             {
                 $("#text-cursor")
                 .css({
-                    left: `${cursor.x * 13.2}px`,
-                    top: `${cursor.y * 29}px`,
-                    ...styles.block,
+                    ...styles.block
                 })
                 .text(
                     (() => {
@@ -106,9 +109,7 @@ function draw() {
             {
                 $("#text-cursor")
                 .css({
-                    left: `${cursor.x * 13.2}px`,
-                    top: `${cursor.y * 29}px`,
-                    ...styles.pipe,
+                    ...styles.pipe
                 })
                 .text("");
             }
