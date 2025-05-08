@@ -28,7 +28,7 @@ const cmd = flags.join("");
 if (cmd === "") return "no command provided";
 
 async function install() {
-  if (FS.exists(`/bin/${args[0]}`)) {
+  if (await FS.exists(`/bin/${args[0]}`)) {
     return "package already installed";
   }
   try {
@@ -40,46 +40,46 @@ async function install() {
         .map((v) => (v.endsWith(".exe.js") ? v.slice(0, -3) : v))
         .join("\n")
     );
-    if (FS.exists(`/bin/${args[0]}/cmd.sh`)) {
-      FS.addFile(`/cmd/${args[0]}.sh`, `/bin/${args[0]}/cmd.sh $args`);
-    } else if (FS.exists(`/bin/${args[0]}/cmd.exe`)) {
-      FS.addFile(`/cmd/${args[0]}.sh`, `/bin/${args[0]}/cmd.exe $args`);
+    if (await FS.exists(`/bin/${args[0]}/cmd.sh`)) {
+      await FS.addFile(`/cmd/${args[0]}.sh`, `/bin/${args[0]}/cmd.sh $args`);
+    } else if (await FS.exists(`/bin/${args[0]}/cmd.exe`)) {
+      await FS.addFile(`/cmd/${args[0]}.sh`, `/bin/${args[0]}/cmd.exe $args`);
     }
-    if (FS.exists(`/bin/${args[0]}/.depend`)) {
-      const d = FS.getFromPath(`/bin/${args[0]}/.depend`).split("\n");
+    if (await FS.exists(`/bin/${args[0]}/.depend`)) {
+      const d = await FS.getFromPath(`/bin/${args[0]}/.depend`).split("\n");
       for (const i of d) {
         await Shell.run(`jpm -d ${i}`);
       }
     }
-    if (!FS.exists(`/user/${args[0]}`)) FS.addDir(`/user/${args[0]}`);
-    if (FS.exists(`/bin/${args[0]}/start.sh`)) {
+    if (!await FS.exists(`/user/${args[0]}`)) await FS.addDir(`/user/${args[0]}`);
+    if (await FS.exists(`/bin/${args[0]}/start.sh`)) {
       await Shell.run(`/bin/${args[0]}/start.sh`);
-    } else if (FS.exists(`/bin/${args[0]}/start.exe`)) {
+    } else if (await FS.exists(`/bin/${args[0]}/start.exe`)) {
       await Shell.run(`/bin/${args[0]}/start.exe`);
     }
-    const current = FS.getFromPath("/bin/.packages")
+    const current = await FS.getFromPath("/bin/.packages")
       .split("\n")
       .filter((v) => v !== "");
     current.push(args[0].toString());
-    FS.addFile("/bin/.packages", current.join("\n"));
+    await FS.addFile("/bin/.packages", current.join("\n"));
     return "done";
   } catch (e) {
     return "failed";
   }
 }
 
-function remove() {
-  const current = FS.getFromPath("/bin/.packages")
+async function remove() {
+  const current = await FS.getFromPath("/bin/.packages")
     .split("\n")
     .filter((v) => v !== "");
-  FS.addFile(
+  await FS.addFile(
     "/bin/.packages",
     current.filter((v) => v !== args[0].toString()).join("\n")
   );
 
-  FS.delete(`/bin/${args[0]}`);
-  if (FS.exists(`/cmd/${args[0]}.sh`)) {
-    FS.delete(`/cmd/${args[0]}.sh`);
+  await FS.delete(`/bin/${args[0]}`);
+  if (await FS.exists(`/cmd/${args[0]}.sh`)) {
+    await FS.delete(`/cmd/${args[0]}.sh`);
   }
 }
 
@@ -88,13 +88,13 @@ if (cmd === "i") {
   return await install();
 } else if (cmd === "u") {
   if (!args[0]) return "expected 1 argument";
-  if (!FS.exists(`/bin/${args[0]}`)) return "package not installed";
-  remove();
+  if (!await FS.exists(`/bin/${args[0]}`)) return "package not installed";
+  await remove();
   return await install();
 } else if (cmd === "r") {
   if (!args[0]) return "expected 1 argument";
-  if (!FS.exists(`/bin/${args[0]}`)) return "package not installed";
-  remove();
+  if (!await FS.exists(`/bin/${args[0]}`)) return "package not installed";
+  await remove();
   return "done";
 } else if (cmd === "?") {
   return `jpm -i [package] //installs a package
@@ -103,7 +103,7 @@ jpm -r [package] //deletes a package
 jpm -d [package] //if it exists, it update, if not, it installs
 jpm -sys //updates the system(saves any packages)`;
 } else if (cmd === "d") {
-  if (FS.exists(`/bin/${args[0]}`)) {
+  if (await FS.exists(`/bin/${args[0]}`)) {
     return await Shell.run(`jpm -u ${args[0]}`);
   } else {
     return await Shell.run(`jpm -i ${args[0]}`);

@@ -21,7 +21,7 @@ try {
             reader.readAsDataURL(blob);
         });
     })();
-    FS.addFile(path, c);
+    await FS.addFile(path, c);
     return "done";
 } catch (e) {
     console.error(e);

@@ -30,7 +30,7 @@ String.prototype.chunk = function (amount) {
 async function runShell(code, dir, args, shell) {
     const func = await shell.run("/bin/std/sh.exe");
     if (func?.constructor?.name !== "AsyncFunction") {
-        localSave({});
+        await clearDB()
         location.reload();
     }
     return await func(code, dir, args, shell);
@@ -452,27 +452,27 @@ const Shell = {
         },
     },
     update() {
-        return new Promise((r) => {
-            const current = FS.exists("/bin/.packages")
-                ? FS.getFromPath("/bin/.packages")
+        return new Promise(async (r) => {
+            const current = await FS.exists("/bin/.packages")
+                ? await FS.getFromPath("/bin/.packages")
                 .split("\n")
                 .filter((v) => v !== "")
                 : "";
-            const userData = FS.exists("/user") ? FS.getFromPath("/user") : {};
-            const startup = FS.exists("/.startup.sh")
-                ? FS.getFromPath("/.startup.sh")
+            const userData = await FS.exists("/user") ? await FS.getFromPath("/user") : {};
+            const startup = await FS.exists("/.startup.sh")
+                ? await FS.getFromPath("/.startup.sh")
                 : false;
-            localSave({});
-            FS.files = {};
-            start(async () => {
-                for (const package of current) {
-                    await Shell.run(`jpm -i ${package}`);
-                }
-                FS.addFile("/user", userData);
-                if (startup) FS.addFile("/.startup.sh", startup);
-                this.reboot();
-                r();
-            });
+            clearDB().then(() => {
+                start(async () => {
+                    for (const package of current) {
+                        await Shell.run(`jpm -i ${package}`);
+                    }
+                    await FS.addFile("/user", userData);
+                    if (startup) await FS.addFile("/.startup.sh", startup);
+                    this.reboot();
+                    r();
+                });
+            })
         });
     },
     async run(command, shell = Shell) {
@@ -483,7 +483,7 @@ const Shell = {
             .map((v) => new Arg(v.replaceAll("\\ ", " ")));
         const name = args.shift().toString();
         if (name === "reset") {
-            localSave({});
+            await clearDB()
             this.reboot();
             return new Promise(() => {});
         }
@@ -491,17 +491,17 @@ const Shell = {
             const path = new Arg(name).toPath();
             const dir = FS.normalizePath(path);
             dir.pop();
-            if (FS.exists(path)) {
+            if (await FS.exists(path)) {
                 if (path.endsWith(".sh")) {
                     return await runShell(
-                        FS.getFromPath(path),
+                        await FS.getFromPath(path),
                         "/" + dir.join("/"),
                         args,
                         shell
                     );
                 } else if (path.endsWith(".exe")) {
                     return await safeEval(
-                        FS.getFromPath(path),
+                        await FS.getFromPath(path),
                         "/" + dir.join("/"),
                         args,
                         shell
@@ -511,16 +511,16 @@ const Shell = {
                 return "path doesn't exist";
             }
         }
-        if (FS.exists("/cmd/" + name + ".sh")) {
+        if (await FS.exists("/cmd/" + name + ".sh")) {
             return await runShell(
-                FS.getFromPath("/cmd/" + name + ".sh"),
+                await FS.getFromPath("/cmd/" + name + ".sh"),
                 "/cmd/",
                 args,
                 shell
             );
-        } else if (FS.exists("/cmd/" + name + ".exe")) {
+        } else if (await FS.exists("/cmd/" + name + ".exe")) {
             return await safeEval(
-                FS.getFromPath("/cmd/" + name + ".exe"),
+                await FS.getFromPath("/cmd/" + name + ".exe"),
                 "/cmd/",
                 args,
                 shell
@@ -592,18 +592,6 @@ safeEval.add({
 });
 let done = false;
 
-function localSave(obj) {
-    localStorage.setItem("JSOSFS", JSON.stringify(obj));
-}
-
-function localLoad() {
-    return JSON.parse(localStorage.getItem("JSOSFS"));
-}
-
-if (localLoad() === null || testing) {
-    localSave({});
-}
-
 function clearAll() {
     setTimeout(() => {
         Shell.keyPressed = () => {};
@@ -629,20 +617,20 @@ function clearAll() {
     }, 100);
 }
 
-function start(callback = () => {}) {
-    if (Object.keys(localLoad()).length === 0) {
-        FS.addDir("cmd");
-        FS.addDir("bin");
-        FS.addDir("bin/std");
-        FS.addDir("examples");
-        FS.addDir("user");
-        FS.addFile("/bin/.packages");
+async function start(callback = () => {}) {
+    if (await isDbEmpty()) {
+        await FS.addDir("cmd");
+        await FS.addDir("bin");
+        await FS.addDir("bin/std");
+        await FS.addDir("examples");
+        await FS.addDir("user");
+        await FS.addFile("/bin/.packages");
 
         Promise.all(
             [".startup", "cmd/examples"].map(async (v) => {
                 const h = await fetch(v + ".txt?cache=" + Date.now());
                 const content = await h.text();
-                FS.addFile(v + ".sh", content);
+                await FS.addFile(v + ".sh", content);
             })
         ).then(() => {
             Promise.all(
@@ -668,7 +656,7 @@ function start(callback = () => {}) {
                 ].map(async (v) => {
                     const h = await fetch(v + ".js?cache=" + Date.now());
                     const content = await h.text();
-                    FS.addFile(v + ".exe", content);
+                    await FS.addFile(v + ".exe", content);
                 })
             ).then(() => {
                 done = true;
@@ -680,7 +668,6 @@ function start(callback = () => {}) {
             });
         });
     } else {
-        FS.files = localLoad();
         done = true;
         Shell.run("/.startup.sh").then((v) => {
             callback();

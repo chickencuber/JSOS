@@ -4,11 +4,11 @@ Shell.terminal.scroll.allow = true;
 
 let content = "";
 
-if (FS.exists(path)) {
-    if (typeof FS.getFromPath(path) === "object") {
+if (await FS.exists(path)) {
+    if (typeof (await FS.getFromPath(path)) === "object") {
         return "path can't be a dir";
     } else {
-        content = FS.getFromPath(path);
+        content = await FS.getFromPath(path);
     }
 }
 
