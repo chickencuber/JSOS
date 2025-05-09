@@ -19,18 +19,18 @@ const FS = {
     },
 
     async getMetaFromPath(path) {
-        path = "/" + FS.normalizePath(path).join("/")          
+        path = FS.normalizePath(path).join("/")          
         if(!await FS.exists(path)) {
             throw new Error("path doesn't exist")
         }
         const f = await get(path);
         if(path === "/") {
             const child = [];
-            const p = "/" + FS.normalizePath(path).join("/");
+            const p = FS.normalizePath(path).join("/");
             for (const k of await keys()) {
                 const c = FS.normalizePath(k);
                 c.pop()
-                if(p === "/" + c.join("/")) {
+                if(p === c.join("/")) {
                     child.push(k);
                 }
             }
@@ -39,11 +39,11 @@ const FS = {
         }
         if (f.type === "dir") {
             const child = [];
-            const p = "/" + FS.normalizePath(path).join("/");
+            const p = FS.normalizePath(path).join("/");
             for (const k of await keys()) {
                 const c = FS.normalizePath(k);
                 c.pop()
-                if(p === "/" + c.join("/")) {
+                if(p === c.join("/")) {
                     child.push(k);
                 }
             }
@@ -60,17 +60,17 @@ const FS = {
     },
 
     async exists(path) {
-        path = "/" + FS.normalizePath(path).join("/")
+        path = FS.normalizePath(path).join("/")
         if(path === "/") return true;
         return (await get(path)) !== undefined;
     },
 
     async addSymlink(path, newpath) {
         const stack = FS.normalizePath(path);
-        path = "/" + stack.join("/")
+        path = stack.join("/")
         if(path === "/") throw new Error("cant do that to root dir");
         stack.pop();
-        if(!await FS.exists("/" + stack.join("/"))) {
+        if(!await FS.exists(stack.join("/"))) {
             throw new Error("parent dir doesn't exist")
         }
         await set(path, {
@@ -80,10 +80,10 @@ const FS = {
     },
     async addFile(path, contents = "") {
         const stack = FS.normalizePath(path);
-        path = "/" + stack.join("/")
+        path = stack.join("/")
         if(path === "/") throw new Error("cant do that to root dir");
         stack.pop();
-        if(!await FS.exists("/" + stack.join("/"))) {
+        if(!await FS.exists(stack.join("/"))) {
             throw new Error("parent dir doesn't exist")
         }
         await set(path, {
@@ -93,10 +93,10 @@ const FS = {
     },
     async addDir(path) {
         const stack = FS.normalizePath(path);
-        path = "/" + stack.join("/")
+        path = stack.join("/")
         if(path === "/") throw new Error("cant do that to root dir");
         stack.pop();
-        if(!await FS.exists("/" + stack.join("/"))) {
+        if(!await FS.exists(stack.join("/"))) {
             throw new Error("parent dir doesn't exist")
         }
         await set(path, {
@@ -104,7 +104,7 @@ const FS = {
         })
     },
     async delete(path) {
-        path = "/" + FS.normalizePath(path).join("/")          
+        path = FS.normalizePath(path).join("/")          
         if(path === "/") throw new Error("cant do that to root dir");
         if(!await FS.exists(path)) {
             throw new Error("path doesn't exist")
@@ -118,12 +118,12 @@ const FS = {
         await del(path);
     },
     async move (path, newPath) {
-        path = "/" + FS.normalizePath(path).join("/");      
+        path = FS.normalizePath(path).join("/");      
         const stack = FS.normalizePath(newPath);
-        newPath = "/" + stack.join("/")
+        newPath = stack.join("/")
         if(path === "/" || newPath === "/") throw new Error("cant do that to root dir");
         stack.pop();
-        if(!await FS.exists("/" + stack.join("/"))) {
+        if(!await FS.exists(stack.join("/"))) {
             throw new Error("parent dir doesn't exist")
         }
         if(!await FS.exists(path)) {
@@ -134,19 +134,19 @@ const FS = {
         await del(path);
         if(p.type === "dir") {
             for(const k of p.contents) {
-                const name = "/" + FS.normalizePath(k).at(-1);
-                const np = "/" + FS.normalizePath(newPath + "/" + name).join("/")
+                const name = FS.normalizePath(k).at(-1);
+                const np = FS.normalizePath(newPath + "/" + name).join("/")
                 await FS.move(k, np);
             }
         }
     },
     async copy(path, newPath) {
-        path = "/" + FS.normalizePath(path).join("/");      
+        path = FS.normalizePath(path).join("/");      
         const stack = FS.normalizePath(newPath);
-        newPath = "/" + stack.join("/")
+        newPath = stack.join("/")
         if(path === "/" || newPath === "/") throw new Error("cant do that to root dir");
         stack.pop();
-        if(!await FS.exists("/" + stack.join("/"))) {
+        if(!await FS.exists(stack.join("/"))) {
             throw new Error("parent dir doesn't exist")
         }
         if(!await FS.exists(path)) {
@@ -156,8 +156,8 @@ const FS = {
         await set(newPath, p);
         if(p.type === "dir") {
             for(const k of p.contents) {
-                const name = "/" + FS.normalizePath(k).at(-1);
-                const np = "/" + FS.normalizePath(newPath + "/" + name).join("/")
+                const name = FS.normalizePath(k).at(-1);
+                const np = FS.normalizePath(newPath + "/" + name).join("/")
                 await FS.copy(k, np);
             }
         }
