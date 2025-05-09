@@ -501,7 +501,7 @@ const Shell = {
             ? await FS.getFromPath("/.startup.sh")
             : false;
         await clearDB()
-        startAsync();
+        await startAsync();
         await setUserData(userData);
         if (startup) await FS.addFile("/.startup.sh", startup);
         for (const package of current) {
