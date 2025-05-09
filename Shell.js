@@ -5,6 +5,40 @@ class Font {
     render() {}
 }
 
+async function getUserData(p = "/user") {
+    if(await FS.exists(p)) {
+        return {};
+    }
+    const c = await FS.getMetaFromPath(p)
+    if(c.type !== "dir") {
+        return {};
+    }
+    const obj = {}
+    for(const n of c.contents) {
+        const s = await FS.getMetaFromPath(n); 
+        if(s.type === "dir") {
+            obj[n] = getUserData(n); 
+        } else {
+            obj[n] = s;
+        }
+    }
+    c.contents = obj;
+    return c;
+}
+
+async function setUserData(data, path ="/user") {
+    if(data.type === "dir") {
+        await FS.addDir(path);
+        for(const [k, v] of Object.entries(data.contents)) {
+            await setUserData(v, k); 
+        }
+    } else if(data.type === "symlink") {
+        await FS.addSymlink(path, data.path)
+    } else {
+        await FS.addFile(path, data.contents)
+    }
+}
+
 function getCmd() {
     return Shell.terminal
         .getLine()
@@ -458,7 +492,7 @@ const Shell = {
                 .split("\n")
                 .filter((v) => v !== "")
                 : "";
-            const userData = await FS.exists("/user") ? await FS.getFromPath("/user") : {};
+            const userData = await getUserData();
             const startup = await FS.exists("/.startup.sh")
                 ? await FS.getFromPath("/.startup.sh")
                 : false;
@@ -467,7 +501,7 @@ const Shell = {
                     for (const package of current) {
                         await Shell.run(`jpm -i ${package}`);
                     }
-                    await FS.addFile("/user", userData);
+                    await setUserData(userData);
                     if (startup) await FS.addFile("/.startup.sh", startup);
                     this.reboot();
                     r();
