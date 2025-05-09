@@ -46,7 +46,7 @@ async function install() {
       await FS.addFile(`/cmd/${args[0]}.sh`, `/bin/${args[0]}/cmd.exe $args`);
     }
     if (await FS.exists(`/bin/${args[0]}/.depend`)) {
-      const d = await FS.getFromPath(`/bin/${args[0]}/.depend`).split("\n");
+      const d = (await FS.getFromPath(`/bin/${args[0]}/.depend`)).split("\n");
       for (const i of d) {
         await Shell.run(`jpm -d ${i}`);
       }
@@ -57,19 +57,20 @@ async function install() {
     } else if (await FS.exists(`/bin/${args[0]}/start.exe`)) {
       await Shell.run(`/bin/${args[0]}/start.exe`);
     }
-    const current = await FS.getFromPath("/bin/.packages")
+    const current = (await FS.getFromPath("/bin/.packages"))
       .split("\n")
       .filter((v) => v !== "");
     current.push(args[0].toString());
     await FS.addFile("/bin/.packages", current.join("\n"));
     return "done";
   } catch (e) {
+      console.log(e)
     return "failed";
   }
 }
 
 async function remove() {
-  const current = await FS.getFromPath("/bin/.packages")
+  const current = (await FS.getFromPath("/bin/.packages"))
     .split("\n")
     .filter((v) => v !== "");
   await FS.addFile(

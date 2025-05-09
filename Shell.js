@@ -454,7 +454,7 @@ const Shell = {
     update() {
         return new Promise(async (r) => {
             const current = await FS.exists("/bin/.packages")
-                ? await FS.getFromPath("/bin/.packages")
+                ? (await FS.getFromPath("/bin/.packages"))
                 .split("\n")
                 .filter((v) => v !== "")
                 : "";
