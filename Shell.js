@@ -498,11 +498,11 @@ const Shell = {
                 : false;
             clearDB().then(() => {
                 start(async () => {
+                    await setUserData(userData);
+                    if (startup) await FS.addFile("/.startup.sh", startup);
                     for (const package of current) {
                         await Shell.run(`jpm -i ${package}`);
                     }
-                    await setUserData(userData);
-                    if (startup) await FS.addFile("/.startup.sh", startup);
                     this.reboot();
                     r();
                 });
