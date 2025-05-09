@@ -6,12 +6,12 @@ class Font {
 }
 
 async function getUserData(p = "/user") {
-    if(await FS.exists(p)) {
-        return {};
+    if(!await FS.exists(p)) {
+        return {type: "dir", contents: {}};
     }
     const c = await FS.getMetaFromPath(p)
     if(c.type !== "dir") {
-        return {};
+        return {type: "dir", contents: {}};
     }
     const obj = {}
     for(const n of c.contents) {
