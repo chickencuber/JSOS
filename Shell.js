@@ -1,5 +1,10 @@
 let running = false;
 
+function startAsync() {
+    return new Promise(r => {
+        start(r)
+    })
+}
 
 class Font {
     render() {}
@@ -17,7 +22,7 @@ async function getUserData(p = "/user") {
     for(const n of c.contents) {
         const s = await FS.getMetaFromPath(n); 
         if(s.type === "dir") {
-            obj[n] = getUserData(n); 
+            obj[n] = await getUserData(n); 
         } else {
             obj[n] = s;
         }
@@ -485,29 +490,25 @@ const Shell = {
             Shell.terminal.scroll.y = $("#scroll").elt.scrollHeight;
         },
     },
-    update() {
-        return new Promise(async (r) => {
-            const current = await FS.exists("/bin/.packages")
-                ? (await FS.getFromPath("/bin/.packages"))
-                .split("\n")
-                .filter((v) => v !== "")
-                : "";
-            const userData = await getUserData();
-            const startup = await FS.exists("/.startup.sh")
-                ? await FS.getFromPath("/.startup.sh")
-                : false;
-            clearDB().then(() => {
-                start(async () => {
-                    await setUserData(userData);
-                    if (startup) await FS.addFile("/.startup.sh", startup);
-                    for (const package of current) {
-                        await Shell.run(`jpm -i ${package}`);
-                    }
-                    this.reboot();
-                    r();
-                });
-            })
-        });
+    async update() {
+        const current = await FS.exists("/bin/.packages")
+            ? (await FS.getFromPath("/bin/.packages"))
+            .split("\n")
+            .filter((v) => v !== "")
+            : "";
+        const userData = await getUserData();
+        const startup = await FS.exists("/.startup.sh")
+            ? await FS.getFromPath("/.startup.sh")
+            : false;
+        await clearDB()
+        startAsync();
+        await setUserData(userData);
+        if (startup) await FS.addFile("/.startup.sh", startup);
+        for (const package of current) {
+            await Shell.run(`jpm -i ${package}`);
+        }
+        this.reboot();
+
     },
     async run(command, shell = Shell) {
         running = true;

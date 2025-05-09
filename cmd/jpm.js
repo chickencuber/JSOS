@@ -111,4 +111,7 @@ jpm -sys //updates the system(saves any packages)`;
   }
 } else if (cmd === "sys") {
   await Shell.update();
+} else { 
+    return "invalid command\n" + await Shell.run("jpm -?")
 }
+    
