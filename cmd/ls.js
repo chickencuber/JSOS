@@ -17,7 +17,7 @@ const contents = await FS.getMetaFromPath(path);
 if (contents.type === "dir") {
   return (await Promise.all(contents.contents
     .filter((k) => !k.slice(1).startsWith(".") || flags.includes("h"))
-    .map(async (k) => ((await FS.getMetaFromPath(k)).type === "dir" ? `dir: ${k.slice(1)}/` : `file: ${k.slice(1)}`))))
+    .map(async (k) => await print(k))))
     .join("\n");
 }
 return "path not a dir";
