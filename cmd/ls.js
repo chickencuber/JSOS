@@ -3,7 +3,7 @@ if (!await FS.exists(path)) {
   return "path doesn't exist";
 }
 async function print(path) {
-    const type = await getMetaFromPath(path).type;
+    const type = await FS.getMetaFromPath(path).type;
     const name = FS.normalizePath(path).at(-1);
     if(type === "dir" ) {
         return "dir: " + name + "/"
