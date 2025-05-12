@@ -6,11 +6,11 @@ async function print(path) {
     const type = await getMetaFromPath(path).type;
     const name = FS.normalizePath(path).at(-1);
     if(type === "dir" ) {
-        return "dir: " + k + "/"
+        return "dir: " + name + "/"
     } else if (type === "symlink") {
-        return "symlink: " + k;
+        return "symlink: " + name;
     } else {
-        return "file: " + k;
+        return "file: " + name;
     }
 }
 const contents = await FS.getMetaFromPath(path);
