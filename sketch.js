@@ -35,11 +35,18 @@ function mousePressed() {
 const styles = {
     block: {
         width: null,
+        height: null,
         display: null,
     },
     pipe: {
         width: "2px",
+        height: null,
         display: null,
+    },
+    underscore: {
+        display: null,
+        width: null,
+        height: "2px",
     },
     none: {
         display: "none",
@@ -104,6 +111,14 @@ function draw() {
                     })()
                 );
             }
+            break;
+        case "underscore": {
+            $("#text-cursor")
+            .css({
+                ...styles.underscore,
+                top: `${cursor.y * 29 + 25}px`,
+            })
+        }
             break;
         case "pipe":
             {
