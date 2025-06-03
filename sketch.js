@@ -38,7 +38,7 @@ const styles = {
         display: null,
     },
     pipe: {
-        width: "1px",
+        width: "2px",
         display: null,
     },
     none: {
