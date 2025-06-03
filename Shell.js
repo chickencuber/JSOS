@@ -424,8 +424,6 @@ const Shell = {
             }
             return $("#terminal").text();
         },
-        color: "#ffffff",
-        background: "#000000",
         scroll: {
             allow: false,
             get y() {
@@ -472,6 +470,15 @@ const Shell = {
             arr[cursor.y].splice(cursor.x - 1, 1);
             $("#terminal").text(arr.map((v) => v.join("")).join("\n"));
             cursor.x--;
+        },
+        get width() {
+            const charWidth = 13.203125;
+            return Math.floor(canvas.width / charWidth);
+        },
+        get height() {
+            const charHeight = 29;
+
+            return Math.floor(canvas.height / charHeight);
         },
         add(str) {
             const cursor = Shell.terminal.cursor;
