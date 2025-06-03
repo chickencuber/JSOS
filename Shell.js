@@ -78,7 +78,7 @@ async function runShell(code, dir, args, shell) {
 const last = [];
 
 function fixCursor() {
-    if (!Shell.terminal.scroll.allow) return;
+    if (!Shell.terminal.scroll.allow && running) return;
     if ($("#text-cursor").rect().right > Shell.size.width) {
         Shell.terminal.scroll.x +=
             $("#text-cursor").rect().right - Shell.size.width;
