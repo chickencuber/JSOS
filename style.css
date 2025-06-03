@@ -41,8 +41,8 @@ canvas {
     margin: 0;
     font-size: 22px;
     line-height: 29px;
-    overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-x: overflow;
+    overflow-y: overflow;
 }
 
 #scroll {

@@ -487,7 +487,6 @@ const Shell = {
             if (str.split("\n").length>1) {
                 cursor.x = str.split("\n").at(-1).length;
             }
-            Shell.terminal.scroll.y = $("#scroll").elt.scrollHeight;
         },
     },
     async update() {
