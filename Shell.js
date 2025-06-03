@@ -79,6 +79,9 @@ const last = [];
 
 function fixCursor() {
     if (!Shell.terminal.scroll.allow && running) return;
+    if(!running) {
+        Shell.terminal.scroll.x = 0;
+    }
     if ($("#text-cursor").rect().right > Shell.size.width) {
         Shell.terminal.scroll.x +=
             $("#text-cursor").rect().right - Shell.size.width;
