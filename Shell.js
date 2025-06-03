@@ -484,8 +484,8 @@ const Shell = {
             $("#terminal").text(arr.map((v) => v.join("")).join("\n"));
             cursor.x += str.length;
             cursor.y += (str.match(/\n/g) || []).length;
-            if (str.endsWith("\n")) {
-                cursor.x = 0;
+            if (str.split("\n").length>1) {
+                cursor.x = str.split("\n").at(-1).length;
             }
             Shell.terminal.scroll.y = $("#scroll").elt.scrollHeight;
         },
