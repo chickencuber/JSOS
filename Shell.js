@@ -473,12 +473,12 @@ const Shell = {
         },
         get width() {
             const charWidth = 13.203125;
-            return Math.floor(canvas.width / charWidth);
+            return Math.floor(Shell.gl.width / charWidth);
         },
         get height() {
             const charHeight = 29;
 
-            return Math.floor(canvas.height / charHeight);
+            return Math.floor(Shell.gl.height / charHeight);
         },
         add(str) {
             const cursor = Shell.terminal.cursor;
