@@ -477,7 +477,6 @@ const Shell = {
         },
         get height() {
             const charHeight = 29;
-
             return Math.floor(Shell.size.height / charHeight);
         },
         add(str) {
@@ -488,6 +487,9 @@ const Shell = {
                 .map((v) => v.split(""));
             while (arr.length <= cursor.y) {
                 arr.push([]);
+            }
+            while(arr[cursor.y].length <= cursor.x) {
+                arr[cursor.y].push(" ");
             }
             arr[cursor.y].splice(cursor.x, 0, str);
             arr[cursor.y] = arr[cursor.y].map((v) => (v === undefined ? " " : v));
