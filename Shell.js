@@ -213,6 +213,7 @@ $("html")
                 }
                 break;
             default:
+                if(key.length>1) return;
                 Shell.terminal.add(key);
                 break;
         }
