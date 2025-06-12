@@ -12,6 +12,8 @@ if (await FS.exists(path)) {
     }
 }
 
+const pre = Shell.terminal.text();
+
 Shell.terminal.clear();
 
 Shell.terminal.add(content);
@@ -26,7 +28,7 @@ return await run((r) => {
                 break;
             case "x":
                 Shell.terminal.clear();
-                r();
+                r(pre);
                 break;
         }
     }
