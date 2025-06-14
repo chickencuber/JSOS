@@ -1,4 +1,4 @@
-const path = args[0]?.toPath() || Shell.localVars.workingDir;
+const path = args[0]?.toPath(Shell) || Shell.localVars.workingDir;
 if (!await FS.exists(path)) {
   return "path doesn't exist";
 }

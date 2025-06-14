@@ -1,5 +1,5 @@
 if (!args[0]) return "expected 1 argument";
-const path = args[0].toPath();
+const path = args[0].toPath(Shell);
 Shell.terminal.scroll.allow = true;
 
 let content = "";

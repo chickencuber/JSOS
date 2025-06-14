@@ -1,6 +1,6 @@
 if (!args[0] || !args[1]) return "expected at 2 args";
 const url = args[0].toString();
-const path = args[1].toPath();
+const path = args[1].toPath(Shell);
 
 try {
     const r = await fetch(url);

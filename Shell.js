@@ -306,8 +306,8 @@ class Arg {
     constructor(val) {
         this.v = val;
     }
-    toPath() {
-        const dir = Shell.localVars.workingDir;
+    toPath(shell) {
+        const dir = shell.localVars.workingDir;
         if (this.v.startsWith("/")) return "/" + FS.normalizePath(this.v).join("/");
         return "/" + FS.normalizePath(dir + "/" + this.v).join("/");
     }
@@ -535,7 +535,7 @@ const Shell = {
             return new Promise(() => {});
         }
         if (name.startsWith("/") || name.startsWith("./")) {
-            const path = new Arg(name).toPath();
+            const path = new Arg(name).toPath(shell);
             const dir = FS.normalizePath(path);
             dir.pop();
             if (await FS.exists(path)) {
@@ -595,23 +595,23 @@ safeEval.add({
     use: safeEval.fromWindow(async (win, shell, path) => {
         if (path.startsWith("~/"))
             path = win.dir + "/" + path.slice(1, path.length);
-        path = new Arg(path).toPath();
+        path = new Arg(path).toPath(shell);
         if (!(path.endsWith(".exe") || path.endsWith(".sh"))) {
             path += "/lib.exe";
         }
-        path = new Arg(path).toPath();
+        path = new Arg(path).toPath(shell);
         return await shell.run(path);
     }),
     getPath: safeEval.fromWindow((win, shell, path) => {
         if (path.startsWith("~/"))
             path = win.dir + "/" + path.slice(1, path.length);
-        path = new Arg(path).toPath();
+        path = new Arg(path).toPath(shell);
         return path;
     }),
     getFile: safeEval.fromWindow((win, shell, path) => {
         if (path.startsWith("~/"))
             path = win.dir + "/" + path.slice(1, path.length);
-        path = new Arg(path).toPath();
+        path = new Arg(path).toPath(shell);
         return FS.getFromPath(path);
     }),
     run(func = () => {}) {
