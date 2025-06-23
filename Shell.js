@@ -522,7 +522,7 @@ const Shell = {
         this.reboot();
 
     },
-    async run(command, shell = Shell) {
+    async run(command, shell = Shell, hasLifetime = true) {
         running = true;
         const args = command
             .split(/(?<!\\) /gm)
@@ -551,7 +551,7 @@ const Shell = {
                         await FS.getFromPath(path),
                         "/" + dir.join("/"),
                         args,
-                        shell
+                        shell, hasLifetime
                     );
                 }
             } else {
@@ -570,7 +570,7 @@ const Shell = {
                 await FS.getFromPath("/cmd/" + name + ".exe"),
                 "/cmd/",
                 args,
-                shell
+                shell, hasLifetime
             );
         } else {
             return "command doesn't exist";
@@ -600,7 +600,7 @@ safeEval.add({
             path += "/lib.exe";
         }
         path = new Arg(path).toPath(shell);
-        return await shell.run(path);
+        return await shell.run(path, shell, false);
     }),
     getPath: safeEval.fromWindow((win, shell, path) => {
         if (path.startsWith("~/"))

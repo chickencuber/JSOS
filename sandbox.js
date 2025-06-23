@@ -13,7 +13,7 @@ function waitUntil(f) {
   ];
 }
 
-async function safeEval(code, path = "/", args = [], shell) {
+async function safeEval(code, path = "/", args = [], shell, has_lifetime = true) {
   const iframe = document.createElement("iframe");
   document.body.appendChild(iframe);
 
@@ -43,7 +43,7 @@ ${code}
 })()`),
       p,
     ]);
-    shell.onExit();
+    if(has_lifetime) shell.onExit();
     return result;
   } catch (error) {
     console.error("Error in sandboxed eval:", error, "\n" + code);
