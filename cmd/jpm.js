@@ -32,7 +32,7 @@ async function install() {
     return "package already installed";
   }
   try {
-    const { sh: shell } = await use("/bin/std");
+    const shell = await use("/bin/std/sh");
     const v = (await request({ GET: { name: args[0].toString() } })).GET;
     await shell(
       v

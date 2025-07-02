@@ -67,7 +67,7 @@ String.prototype.chunk = function (amount) {
 };
 
 async function runShell(code, dir, args, shell) {
-    const func = await shell.run("/bin/std/sh.exe");
+    const func = await shell.run("/bin/std/sh/lib.exe");
     if (func?.constructor?.name !== "AsyncFunction") {
         await clearDB()
         location.reload();
@@ -600,7 +600,11 @@ safeEval.add({
             path += "/lib.exe";
         }
         path = new Arg(path).toPath(shell);
-        return await shell.run(path, shell, false);
+        const code = await FS.getFromPath(path);
+        return await win.eval(`(async () => {
+            ${code}
+        })()`)
+        //return await shell.run(path, shell, false);
     }),
     getPath: safeEval.fromWindow((win, shell, path) => {
         if (path.startsWith("~/"))
@@ -669,6 +673,8 @@ async function start(callback = () => {}) {
         await FS.addDir("cmd");
         await FS.addDir("bin");
         await FS.addDir("bin/std");
+        await FS.addFile("/bin/std/sh");
+        await FS.addFile("/bin/std/sound");
         await FS.addDir("examples");
         await FS.addDir("user");
         await FS.addFile("/bin/.packages");
@@ -692,14 +698,16 @@ async function start(callback = () => {}) {
                     "cmd/mkdir",
                     "cmd/touch",
                     "cmd/nano",
-                    "bin/std/sh",
                     "cmd/curl",
                     "cmd/jpm",
                     "cmd/echo",
-                    "examples/graphics",
                     "cmd/reboot",
                     "cmd/cursor",
                     "bin/std/lib",
+                    "bin/std/sh/lib",
+                    "bin/std/sound/lib",
+                    "examples/graphics",
+                    "examples/sound",
                 ].map(async (v) => {
                     const h = await fetch(v + ".js?cache=" + Date.now());
                     const content = await h.text();
@@ -707,7 +715,7 @@ async function start(callback = () => {}) {
                 })
             ).then(() => {
                 done = true;
-                Shell.run("/.startup.sh").then((v) => {
+                Shell.run("/.startup.sh").then((_) => {
                     callback();
                     clearAll();
                     Shell.terminal.add(Shell.localVars.workingDir + ">");
