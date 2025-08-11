@@ -1,5 +1,6 @@
 return async (code, dir = "", args = []) => {
     code = code.split("\n").map((v) => v.trim());
+    args = args.map(v => v.split(" ").join("\\ "))
     const vars = {
         dir,
         ...args,
