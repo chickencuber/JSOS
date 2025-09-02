@@ -651,7 +651,7 @@ function clearAll() {
         if (Shell.gl.canvas !== false) {
             Shell.gl.canvas.remove();
         }
-        Shell.scroll = false;
+        Shell.terminal.scroll.allow = false;
         Shell.gl.canvas = false;
         Shell.mouseClicked = () => {};
         Shell.gl.draw = () => {};
