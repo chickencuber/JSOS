@@ -1,3 +1,4 @@
+Shell.terminal.scroll.allow = true;
 async function request(p) {
   const URL =
     "https://script.google.com/macros/s/AKfycbyhfnfikuaxp9KWKaTUloK0eNtO1m0tEJh_CYA-jdpddLukbbGox7PbcwMdyKoqGaHc/exec";
