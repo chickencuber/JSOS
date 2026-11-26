@@ -27,9 +27,9 @@ function setup() {
 }
 
 function mousePressed() {
-    fullscreen(true);
     $("html").elt.requestPointerLock();
     navigator.keyboard.lock();
+        fullscreen(true);
 }
 
 const styles = {
